@@ -1,0 +1,39 @@
+version: "3.4"
+
+services:
+
+  db-faq:
+    container_name: db-faq
+    image: postgres
+    env_file:
+      - .env
+    volumes:
+       - postgres:/data/postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - postgres
+    restart: unless-stopped
+
+  api-faq:
+    container_name: api-faq
+    image: api-faq
+    depends_on:
+      - db-faq
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    env_file:
+      - .env
+    ports:
+      - 8081:8081
+    networks:
+      - postgres
+  
+
+networks:
+  postgres:
+    driver: bridge
+
+volumes:
+    postgres:
